@@ -1,107 +1,117 @@
-# Mini Library System
+# Mini Library Management System
 
-A command-line library management system written in Python. Users can register, log in, browse and search books, and borrow or return them. Admins can also add new books to the catalogue.
+## Overview
 
-## Problem Statement
+A command-line library management system written in Python. An admin can manage books and members, and members can search, borrow, and return books. The program also calculates fines for late returns and shows a simple report of the library's status.
 
-Small libraries, college clubs, and school reading rooms often track books and borrowers on paper or in scattered spreadsheets. This makes it hard to know which books are available, who has borrowed what, and who is allowed to manage the catalogue. Records get lost, books go missing, and searching for a title takes far longer than it should.
+The project is built using only the concepts from the Python Essentials course: variables, operators, input/output, lists, tuples, sets, dictionaries, control flow, functions, modules and packages, and object-oriented programming.
 
-This project solves that with a simple, lightweight system that:
-
-- keeps a single, searchable catalogue of books and their availability
-- tracks borrowing and returning against individual user accounts
-- separates what admins (who manage books) and members (who borrow them) can do
+For the problem statement, scope, and target users, see [statement.md](statement.md).
 
 ## Features
 
-- **User accounts**: register and log in with a username and password
-- **Role-based access**: two roles, `admin` and `member`
-- **Browse books**: view the full catalogue with ID, title, author, and availability status
-- **Search**: find books by a title keyword
-- **Borrow and return**: members check books out and return them by Book ID
-- **Admin tools**: admins can add new books to the database
+- Admin login with a password
+- Add, view, search, update, and delete books
+- Register and view members (Student, Faculty, Other)
+- Issue and return books with a borrowing limit per member type
+- Fine calculation for books kept more than 14 days (Rs 2 per extra day)
+- Library report (titles, copies, issued books, members, fines, out-of-stock books)
+- Input validation on every number and text entry
+
+## Functional Requirements
+
+1. **Book Management:** add, view, search, update copies, delete books
+2. **Member Management:** register members and view them
+3. **Loan Management:** issue books, return books, calculate fines
+4. **Reports:** admin summary and a member's borrowed books
+
+## Non-Functional Requirements
+
+1. **Usability:** simple numbered menus and clear messages after every action
+2. **Security:** admin features are protected by a password with 3 attempts
+3. **Reliability:** all input is validated, so wrong entries (letters instead of numbers, blank text, wrong IDs) do not crash the program
+4. **Maintainability:** code is split into separate modules, each with one job, and uses functions and classes
+5. **Error handling:** actions return a (success, message) pair, which the menu prints to the user
+
+## Technologies Used
+
+- Python 3.6 or above
+- No external libraries needed
+- Git and GitHub for version control
 
 ## Project Structure
 
 ```
-.
-├── main.py     # Entry point: menus and user interaction loop
-├── db.py       # Database setup and table creation
-├── auth.py     # Registration and login logic
-├── books.py    # Fetch, search, and add books
-└── loans.py    # Borrow and return logic
+library-management-system/
+├── main.py              # start the program from here (menus)
+├── test_library.py      # tests
+├── statement.md
+├── README.md
+├── docs/                # diagrams, screenshots and project report
+└── library/
+    ├── __init__.py
+    ├── models.py        # Book, Member, Student, Faculty classes
+    ├── storage.py       # lists and dictionaries holding the data
+    ├── validation.py    # input checking helpers
+    ├── books.py         # book functions
+    ├── members.py       # member functions
+    ├── loans.py         # issue, return, fine
+    └── reports.py       # reports
 ```
 
-## Requirements
+## How to Install and Run
 
-- Python 3.8 or higher
-- No external libraries required (add any here if your modules use them)
-
-## Getting Started
-
-1. **Clone or download** the project:
-   ```bash
-   git clone <your-repo-url>
-   cd <project-folder>
+1. Install Python 3 from [python.org](https://www.python.org/downloads/)
+2. Download the project folder from GitHub and open it in a terminal
+3. Run the program:
    ```
-
-2. **Run the program**:
-   ```bash
    python main.py
    ```
 
-The database tables are created automatically on first run.
+Some sample books and two sample members (ID 1 is a student, ID 2 is a faculty member) are loaded at the start so you can try it right away.
 
-## Usage
+- Admin password: `admin123`
 
-### Before login
+## How to Use
+
+1. Choose **Admin** to manage books and members, or **Member** and enter your member ID.
+2. Members can search a book, note its ID, then choose **Borrow a book**.
+3. To return a book, enter its ID and the number of days you kept it. If it is more than 14 days, the fine is shown.
+
+## Borrowing Limits
+
+| Member type | Books at a time |
+|-------------|-----------------|
+| Student     | 3               |
+| Faculty     | 5               |
+| Other       | 2               |
+
+## Testing
+
+Run the tests with:
 
 ```
-=== Mini Library System ===
-1. Register
-2. Login
-3. Exit
+python test_library.py
 ```
 
-### After login
+It checks adding and searching books, issuing and returning, borrowing limits, fine calculation, delete and update rules, and the report. Each test prints PASS or FAIL, followed by a summary count.
 
-```
---- Main Menu (member) ---
-1. View All Books
-2. Search Books
-3. Borrow Book
-4. Return Book
-6. Logout
-```
+## Screenshots
 
-Admins also see option **5. Add Book (Admin Only)**.
+**Admin: books and library report**
 
-### Example flow
+![Admin report](docs/screenshots/shot_admin_report.png)
 
-1. Choose `1` to register a new user with the role `admin` or `member`.
-2. Choose `2` to log in.
-3. Choose `1` to view all books and note the ID of the one you want.
-4. Choose `3` and enter the Book ID to borrow it.
-5. Choose `4` and enter the Book ID to return it.
+**Member: search and borrow a book**
 
-## Roles
+![Borrow a book](docs/screenshots/shot_borrow.png)
 
-| Role     | View / Search | Borrow / Return | Add Books |
-|----------|:-------------:|:---------------:|:---------:|
-| `member` | Yes           | Yes             | No        |
-| `admin`  | Yes           | Yes             | Yes       |
+**Member: return a book with a fine**
 
-## Known Limitations and Future Improvements
+![Return with fine](docs/screenshots/shot_return_fine.png)
 
-- Anyone can register as `admin`; restrict this in a real deployment
-- Non-numeric input for Book ID is not handled yet
-- Passwords should be hashed if they are not already
-- Possible additions: due dates and fines, delete/edit books, loan history per user
+## Limitations and Future Enhancements
 
-## Author
-
-Built as a learning project. Feel free to fork it and make it your own.
-
-## License
-
-Add a license of your choice (for example, MIT).
+- Data is not saved after the program closes (file storage can be added later)
+- No graphical interface
+- Possible additions: due dates using real dates, book history per member, and password-protected member accounts
